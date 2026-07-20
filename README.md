@@ -285,6 +285,52 @@ cd codegraph-rust
 ./install-codegraph-full-features.sh
 ```
 
+#### Nix
+
+The project provides optional Nix flake outputs for users who already use Nix. The flake builds from source.
+
+```bash
+# Latest source from default branch
+nix run github:levonk/codegraph-rust
+
+# Specific release (uses the flake at that git tag)
+nix run github:levonk/codegraph-rust/v1.2.3
+
+# Named outputs: #codegraph (default features), #codegraph-full (all features), #source
+nix run github:levonk/codegraph-rust#codegraph
+nix run github:levonk/codegraph-rust#codegraph-full
+nix run github:levonk/codegraph-rust#source
+
+# Build / develop
+nix build github:levonk/codegraph-rust
+nix develop github:levonk/codegraph-rust
+```
+
+The flake exposes `packages.<system>.default` (and `.#codegraph`, `.#codegraph-full`, `.#source`), `apps.<system>.default`, `devShells.<system>.default`, and `overlays.default`. `.#codegraph` builds with default features (`daemon`); `.#codegraph-full` builds with the project's `full` feature set (ai-enhanced, server-http, all-agents, all-embeddings) — equivalent to `./install-codegraph-full-features.sh`.
+
+Update through the same Nix workflow you used to install. For profile installs, run `nix profile list` and then `nix profile upgrade <index-or-name>`. For flake inputs, run `nix flake update codegraph-rust` in your own flake and rebuild.
+
+#### Devbox
+
+For reproducible development environments, use Devbox:
+
+```bash
+# Install Devbox first (if not already installed)
+curl -fsSL https://get.jetify.dev/devbox | bash
+
+# Initialize the environment
+devbox shell
+
+# Build the project
+devbox run build
+```
+
+Or install Devbox via Homebrew:
+
+```bash
+brew install jetify-com/devbox/devbox
+```
+
 #### macOS faster builds (LLVM lld)
 
 If you develop on macOS, you can opt into LLVM's `lld` linker for faster linking:

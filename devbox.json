@@ -1,0 +1,20 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.12.0/.schema/devbox.schema.json",
+  "packages": [
+    "rustc",
+    "cargo",
+    "rust-analyzer",
+    "pkg-config",
+    "openssl"
+  ],
+  "shell": {
+    "init_hook": [
+      "echo 'Welcome to the CodeGraph devbox environment!'"
+    ],
+    "scripts": {
+      "build": "cargo build --release -p codegraph-mcp-server",
+      "test": "cargo test",
+      "run": "cargo run --bin codegraph -p codegraph-mcp-server --"
+    }
+  }
+}
