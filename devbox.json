@@ -5,7 +5,8 @@
     "cargo",
     "rust-analyzer",
     "pkg-config",
-    "openssl"
+    "openssl",
+    "surrealdb"
   ],
   "shell": {
     "init_hook": [

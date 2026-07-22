@@ -19,7 +19,7 @@
         codegraph = pkgs.rustPlatform.buildRustPackage {
           pname = "codegraph";
           version = "1.0.0";
-          src = ./.;
+          src = pkgs.lib.cleanSource ./.;
           cargoLock = {
             lockFile = ./Cargo.lock;
             # The workspace Cargo.lock contains git dependencies from the
@@ -52,7 +52,11 @@
 
           buildInputs =
             [ pkgs.openssl ]
-            ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [ pkgs.libiconv ];
+            ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [
+              pkgs.libiconv
+              pkgs.darwin.apple_sdk.frameworks.Security
+              pkgs.darwin.apple_sdk.frameworks.SystemConfiguration
+            ];
 
           # The installer script exports MACOSX_DEPLOYMENT_TARGET=11.0 to
           # target a reasonable macOS baseline. Mirror that so the Darwin
@@ -126,8 +130,12 @@
         devShells.default = pkgs.mkShell {
           nativeBuildInputs = [ pkgs.pkg-config ];
           buildInputs =
-            [ pkgs.openssl pkgs.rustc pkgs.cargo pkgs.cargo-watch ]
-            ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [ pkgs.libiconv ];
+            [ pkgs.openssl pkgs.rustc pkgs.cargo pkgs.cargo-watch pkgs.surrealdb ]
+            ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [
+              pkgs.libiconv
+              pkgs.darwin.apple_sdk.frameworks.Security
+              pkgs.darwin.apple_sdk.frameworks.SystemConfiguration
+            ];
           MACOSX_DEPLOYMENT_TARGET = pkgs.lib.optionalString pkgs.stdenv.isDarwin "11.0";
         };
       }
