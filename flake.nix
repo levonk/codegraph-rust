@@ -3,13 +3,26 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    # Pin both darwin systems to a stable release branch. x86_64-darwin needs
+    # it for older macOS Intel compatibility; aarch64-darwin needs it because
+    # nixpkgs-unstable currently has a regression where apple_sdk_11_0 is
+    # referenced but has been removed (see nixpkgs darwin-aliases.nix). The
+    # -darwin branch receives security updates without the breaking churn.
+    nixpkgs-darwin-legacy.url = "github:NixOS/nixpkgs/nixpkgs-24.05-darwin";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, flake-utils, ... }@inputs:
+  outputs = { self, nixpkgs, nixpkgs-darwin-legacy, flake-utils, ... }@inputs:
     flake-utils.lib.eachDefaultSystem (system:
       let
-        pkgs = nixpkgs.legacyPackages.${system};
+        isDarwin = builtins.match ".*-darwin" system != null;
+        # SurrealDB uses BSL 1.1 (unfree in nixpkgs). Allow it so
+        # `nix flake check` and `nix develop` work without --impure.
+        allowUnfreeSurreal = { allowUnfreePredicate = pkg: (pkg.pname or (builtins.parseDrvName pkg.name).name) == "surrealdb"; };
+        pkgs =
+          if isDarwin
+          then import nixpkgs-darwin-legacy { inherit system; config = allowUnfreeSurreal; }
+          else import nixpkgs { inherit system; config = allowUnfreeSurreal; };
 
         # The main `codegraph` binary lives in the `codegraph-mcp-server`
         # workspace member (crates/codegraph-mcp-server). `default` features
