@@ -72,6 +72,38 @@ cargo install --path crates/codegraph-mcp-server --bin codegraph \
   --all-features --features autoagents-lats --force
 ```
 
+### Nix (Flakes)
+
+The project ships a `flake.nix` that builds the `codegraph` binary from source. This is the recommended path for NixOS / Nix-Darwin / home-manager users, and for anyone who wants a reproducible build without polluting `~/.cargo`.
+
+```bash
+# Run the latest default-features build (daemon) without installing
+nix run github:levonk/codegraph-rust
+
+# Run the full-feature build (equivalent to install-codegraph-full-features.sh)
+nix run github:levonk/codegraph-rust#codegraph-full
+
+# Pin to a specific release tag (the flake builds from source at any tag)
+nix run github:levonk/codegraph-rust/v1.2.3
+
+# Install into your Nix profile
+nix profile add github:levonk/codegraph-rust
+
+# Drop into a dev shell with rustc, cargo, rust-analyzer, pkg-config, openssl
+nix develop github:levonk/codegraph-rust
+```
+
+The flake exposes these outputs:
+
+| Output | Description |
+| --- | --- |
+| `.#codegraph` (also `.#default`, `.#source`) | Default-features build (`daemon`) — the minimal CLI |
+| `.#codegraph-full` | Full-feature build (ai-enhanced, server-http, all-agents, all-embeddings) |
+| `devShells.default` | rustc + cargo + rust-analyzer + pkg-config + openssl |
+| `overlays.default` | Overlay adding `codegraph` and `codegraph-full` to nixpkgs |
+
+After installing via Nix, continue with [Setting Up SurrealDB](#setting-up-surrealdb) below — SurrealDB is still required for graph storage and is not provided by the flake.
+
 ---
 
 ## Setting Up SurrealDB

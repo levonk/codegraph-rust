@@ -186,3 +186,9 @@ idd-state.graphson
 todo.md
 *.spec.md
 journal.md
+
+# Nix build result symlinks
+/result
+/result-*
+# Devbox generated artifacts
+.devbox/

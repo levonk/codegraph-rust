@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Added optional Nix flake support for building, running, installing, and developing CodeGraph with Nix (`nix run github:levonk/codegraph-rust`, `nix profile add github:levonk/codegraph-rust`). Includes `.#codegraph` (default features), `.#codegraph-full` (all features), `devShells.default`, and `overlays.default`. Also adds a Devbox environment and a path-filtered Nix CI workflow.
+
 ### 🚀 **Enhanced - Rig-Based Agent System (Now Default)**
 
 #### **Default Backend Switch**
